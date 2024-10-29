@@ -5,11 +5,11 @@ import { Modal, ModalBody, ModalContent, ModalTrigger } from "./ui/animated-moda
 export function AnimatedModal({ children, trigger }: { children: React.ReactNode, trigger: React.ReactNode }) {
     return (
         <div className="  flex items-center justify-center">
-            <Modal>
-                <ModalTrigger>
+            <Modal >
+                <ModalTrigger >
                     {trigger}
                 </ModalTrigger>
-                <ModalBody>
+                <ModalBody >
                     <ModalContent>
                         {children}
                     </ModalContent>

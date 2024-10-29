@@ -18,68 +18,59 @@ import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import EventCreationDialog from './EventCreation'
 
-const meetingsData = [
-    // {
-    //     id: 1,
-    //     eventTitle: 'Leslie Alexander',
-    //     imageUrl:
-    //         'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    //     // startDatetime: '2024-10-29T13:00',
-    //     // endDatetime: '2024-10-29T14:30',
-    //     startDateTime: '2024-10-29T03:30',
-    //     endDateTime: '2024-10-29T18:15',
-    //     eventDescription: "",
-    // },
-    // {
-    //     id: 2,
-    //     eventTitle: 'Michael Foster',
-    //     imageUrl:
-    //         'https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    //     startDatetime: 'Wed Oct 30 2024 09:00:00 GMT+0530 (India Standard Time)',
-    //     // endDatetime: '2024-10-31T11:30',
-    //     endDatetime: 'Wed Thu 31 2024 09:30:00 GMT+0530 (India Standard Time)',
-    //     eventDescription: "",
-    // },
+// const meetingsData = [
+//     // {
+//     //     id: 1,
+//     //     eventTitle: 'Leslie Alexander',
+//     //     imageUrl:
+//     //         'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+//     //     // startDatetime: '2024-10-29T13:00',
+//     //     // endDatetime: '2024-10-29T14:30',
+//     //     startDateTime: '2024-10-29T03:30',
+//     //     endDateTime: '2024-10-29T18:15',
+//     //     eventDescription: "",
+//     // },
+//     // {
+//     //     id: 2,
+//     //     eventTitle: 'Michael Foster',
+//     //     imageUrl:
+//     //         'https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+//     //     startDatetime: 'Wed Oct 30 2024 09:00:00 GMT+0530 (India Standard Time)',
+//     //     // endDatetime: '2024-10-31T11:30',
+//     //     endDatetime: 'Wed Thu 31 2024 09:30:00 GMT+0530 (India Standard Time)',
+//     //     eventDescription: "",
+//     // },
 
-    // {
-    //     id: 3,
-    //     name: 'Dries Vincent',
-    //     imageUrl:
-    //         'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    //     startDatetime: '2022-05-20T17:00',
-    //     endDatetime: '2022-05-20T18:30',
+//     // {
+//     //     id: 3,
+//     //     name: 'Dries Vincent',
+//     //     imageUrl:
+//     //         'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+//     //     startDatetime: '2022-05-20T17:00',
+//     //     endDatetime: '2022-05-20T18:30',
 
-    // },
-    // {
-    //     id: 4,
-    //     name: 'Leslie Alexander',
-    //     imageUrl:
-    //         'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    //     startDatetime: '2022-06-09T13:00',
-    //     endDatetime: '2022-06-09T14:30',
-    // },
-    // {
-    //     id: 5,
-    //     name: 'Michael Foster',
-    //     imageUrl:
-    //         'https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-    //     startDatetime: '2022-05-13T14:00',
-    //     endDatetime: '2022-05-13T14:30',
-    // },
-]
+//     // },
+//     // {
+//     //     id: 4,
+//     //     name: 'Leslie Alexander',
+//     //     imageUrl:
+//     //         'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+//     //     startDatetime: '2022-06-09T13:00',
+//     //     endDatetime: '2022-06-09T14:30',
+//     // },
+//     // {
+//     //     id: 5,
+//     //     name: 'Michael Foster',
+//     //     imageUrl:
+//     //         'https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+//     //     startDatetime: '2022-05-13T14:00',
+//     //     endDatetime: '2022-05-13T14:30',
+//     // },
+// ]
 
 function classNames(...classes: (string | boolean)[]) {
     return classes.filter(Boolean).join(' ')
 }
-
-export function formatDateAndTime(dateStr: Date) {
-    const date = new Date(dateStr);
-    // Adjust for timezone offset
-    const offset = date.getTimezoneOffset();
-    const localDate = new Date(date.getTime() - (offset * 60 * 1000));
-    return localDate.toISOString().slice(0, 16);
-}
-
 
 
 
@@ -213,6 +204,7 @@ export default function Scheduler() {
                                 {format(selectedDay, 'MMM dd, yyy')}
                             </time>
                         </h2>
+                        <hr className='my-1' />
                         <ol className="mt-4 space-y-1 text-sm leading-6 text-gray-500 overflow-x-scroll h-[50%]">
                             {selectedDayMeetings.length > 0 ? (
                                 selectedDayMeetings.map((meeting) => (
@@ -248,6 +240,7 @@ export default function Scheduler() {
                         <h2 className="font-semibold text-gray-900">
                             All Upcoming Meetings
                         </h2>
+                        <hr className='my-1' />
                         <ol className="mt-4 space-y-1 text-sm leading-6 text-gray-500 overflow-x-scroll ">
                             {meetings.length > 0 ? (
                                 meetings.map((meeting) => (
@@ -277,7 +270,7 @@ export default function Scheduler() {
                                     </div>
                                 ))
                             ) : (
-                                <p>No meetings for today.</p>
+                                <p>No Upcoming meetings.</p>
                             )}
                         </ol>
                     </section>

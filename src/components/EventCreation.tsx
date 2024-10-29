@@ -79,7 +79,7 @@ interface EventCreationDialogProps {
         startDateTime: string;
         endDateTime: string;
         eventDescription: string;
-    }[]>>
+    }[]>>;
 }
 
 const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
@@ -87,7 +87,8 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
     event,
     onClose,
     open,
-    onOpenChange, setMeeting
+    onOpenChange,
+    setMeeting,
 }) => {
     const timeOptions = generateTimeOptions();
 
@@ -104,6 +105,7 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
                 eventDescription: event.eventDescription,
             };
         }
+
         return {
             eventTitle: "",
             startDate: new Date(),
@@ -116,6 +118,32 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
 
     const form = useForm<FormData>({
         defaultValues: getDefaultValues(),
+        resolver: async (values) => {
+            const errors: Record<string, { type: string; message: string }> = {};
+
+            // Add eventTitle validation
+            if (!values.eventTitle || values.eventTitle.trim() === '') {
+                errors.eventTitle = {
+                    type: 'required',
+                    message: 'Event title is required'
+                };
+            }
+
+            const [startHour, startMinute] = values.startTime.split(':').map(Number);
+            const [endHour, endMinute] = values.endTime.split(':').map(Number);
+
+            if (endHour < startHour || (endHour === startHour && endMinute <= startMinute)) {
+                errors.endTime = {
+                    type: 'validation',
+                    message: 'End time must be after start time'
+                };
+            }
+
+            return {
+                values: Object.keys(errors).length === 0 ? values : {},
+                errors: errors
+            };
+        }
     });
 
     const combineDateAndTime = (date: Date, time: string) => {
@@ -126,10 +154,22 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
 
     const onSubmit = async (data: FormData) => {
         try {
+            const startDateTime = combineDateAndTime(data.startDate, data.startTime);
+            const endDateTime = combineDateAndTime(data.endDate, data.endTime);
+
+            // Additional validation to ensure end time is after start time
+            if (endDateTime <= startDateTime) {
+                form.setError("endTime", {
+                    type: "manual",
+                    message: "End time must be after start time"
+                });
+                return;
+            }
+
             const formattedData = {
                 id: mode === 'edit' ? Number(event?.id) : Math.random(),
-                startDateTime: formatDateAndTime(combineDateAndTime(data.startDate, data.startTime)),
-                endDateTime: formatDateAndTime(combineDateAndTime(data.startDate, data.endTime)),
+                startDateTime: formatDateAndTime(startDateTime),
+                endDateTime: formatDateAndTime(endDateTime),
                 eventDescription: data.eventDescription,
                 eventTitle: data.eventTitle,
                 imageUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
@@ -178,7 +218,7 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
                             name="eventTitle"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Meeting Title</FormLabel>
+                                    <FormLabel>Meeting Title<span className="text-red-500">*</span></FormLabel>
                                     <FormControl>
                                         <Input placeholder="Enter Event title" {...field} />
                                     </FormControl>
@@ -258,7 +298,7 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
                                         control={form.control}
                                         name="endTime"
                                         render={({ field }) => (
-                                            <FormItem>
+                                            <FormItem className='relative'>
                                                 <FormLabel>End Time</FormLabel>
                                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                     <FormControl>
@@ -274,7 +314,7 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
                                                         ))}
                                                     </SelectContent>
                                                 </Select>
-                                                <FormMessage />
+                                                <FormMessage className='absolute -bottom-5 left-0 w-[200px]' />
                                             </FormItem>
                                         )}
                                     />

@@ -225,7 +225,7 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
         <Dialog open={open} onOpenChange={onOpenChange}>
             {mode === 'create' && (
                 <DialogTrigger asChild>
-                    <Button className="gap-2">
+                    <Button variant={"outline"} className="gap-2 border-blue-500 text-blue-500">
                         <Plus className="h-4 w-4" />
                         Create Event
                     </Button>

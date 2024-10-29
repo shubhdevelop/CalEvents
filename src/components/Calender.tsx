@@ -76,7 +76,7 @@ export default function Scheduler() {
                         <div className="flex items-center justify-between">
                             <div className='flex flex-row justify-between items-center gap-4'>
                                 <div className="flex-auto text-xl font-semibold text-gray-900">
-                                    <h3 className='text-sm text-gray-500'>Selected Date:  </h3>
+                                    <h3 className='text-sm text-blue-400'>Selected Date:  </h3>
                                     {format(selectedDay, 'dd MMMM yyyy')}
                                 </div>
                             </div>
@@ -89,7 +89,9 @@ export default function Scheduler() {
                                 >
                                     <ChevronLeft className="w-5 h-5" aria-hidden="true" />
                                 </Button>
-                                {currentMonth}
+                                <div className="p-2 flex flex-row items-center justify-center border-[1px] rounded-md">
+                                    {currentMonth}
+                                </div>
                                 <Button
                                     onClick={nextMonth}
                                     type="button"
@@ -155,7 +157,7 @@ export default function Scheduler() {
                     </div>
                     <section className="mt-12 md:mt-0 md:pl-14">
                         <h2 className="font-semibold text-gray-900">
-                            Schedule for{' '}
+                            Events Schedule for{' '}
                             <time dateTime={format(selectedDay, 'yyyy-MM-dd')}>
                                 {format(selectedDay, 'MMM dd, yyy')}
                             </time>
@@ -164,7 +166,7 @@ export default function Scheduler() {
                         <ol className="mt-4 space-y-1 text-sm leading-6 text-gray-500 overflow-x-scroll h-[50%]">
                             {selectedDayMeetings.length > 0 ? (
                                 selectedDayMeetings.map((meeting) => (
-                                    <div key={meeting.id} className='w-fit border-[1px] p-2 rounded-md flex flex-col justify-center gap-2 min-w-full'>
+                                    <div key={meeting.id} style={{ borderColor: meeting.eventColor }} className='w-fit border-[1px] p-2 rounded-md flex flex-col justify-center gap-2 min-w-full'>
                                         <div className='flex flex-row gap-2 justify-start items-center font-bold text-xs text-black'>
                                             <img src={meeting.imageUrl} alt="" width={40} className='rounded-full' />
                                             <div className='flex flex-col justify-center items-start'>
@@ -190,17 +192,17 @@ export default function Scheduler() {
                                     </div>
                                 ))
                             ) : (
-                                <p>No meetings for today.</p>
+                                <p>No Events for the day.</p>
                             )}
                         </ol>
                         <h2 className="font-semibold text-gray-900">
-                            All Upcoming Meetings
+                            All Upcoming Events
                         </h2>
                         <hr className='my-1' />
                         <ol className="mt-4 space-y-1 text-sm leading-6 text-gray-500 overflow-x-scroll ">
                             {meetings.length > 0 ? (
                                 meetings.map((meeting) => (
-                                    <div key={meeting.id} className='w-fit border-[1px] p-2 rounded-md flex flex-col justify-center gap-2 min-w-full'>
+                                    <div key={meeting.id} style={{ borderColor: meeting.eventColor }} className='w-fit border-[1px] p-2 rounded-md flex flex-col justify-center gap-2 min-w-full'>
                                         <div className='flex flex-row gap-2 justify-start items-center font-bold text-xs text-black'>
                                             <img src={meeting.imageUrl} alt="" width={40} className='rounded-full' />
                                             <div className='flex flex-col justify-center items-start'>
@@ -226,7 +228,7 @@ export default function Scheduler() {
                                     </div>
                                 ))
                             ) : (
-                                <p>No Upcoming meetings.</p>
+                                <p>No Upcoming Events.</p>
                             )}
                         </ol>
                     </section>

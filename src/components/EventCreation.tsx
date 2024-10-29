@@ -45,6 +45,7 @@ interface FormData {
     endDate: Date;
     endTime: string;
     eventDescription: string;
+    eventColor: string;
 }
 
 const generateTimeOptions = () => {
@@ -59,6 +60,15 @@ const generateTimeOptions = () => {
     return options;
 };
 
+const colorOptions = [
+    { value: '#FF5733', label: 'Red' },
+    { value: '#33FF57', label: 'Green' },
+    { value: '#3357FF', label: 'Blue' },
+    { value: '#FFD700', label: 'Yellow' },
+    { value: '#FF33F6', label: 'Pink' },
+    { value: '#33FFF6', label: 'Cyan' }
+];
+
 interface EventCreationDialogProps {
     mode?: 'create' | 'edit';
     event?: {
@@ -68,6 +78,7 @@ interface EventCreationDialogProps {
         startDateTime: string;
         endDateTime: string;
         eventDescription: string;
+        eventColor?: string;
     };
     onClose?: () => void;
     open?: boolean;
@@ -79,6 +90,7 @@ interface EventCreationDialogProps {
         startDateTime: string;
         endDateTime: string;
         eventDescription: string;
+        eventColor: string;
     }[]>>;
 }
 
@@ -103,6 +115,7 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
                 endDate: endDate,
                 endTime: format(endDate, 'HH:mm'),
                 eventDescription: event.eventDescription,
+                eventColor: event.eventColor || '#FF5733',
             };
         }
 
@@ -114,6 +127,7 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
             endDate: defaultDate,
             endTime: "10:00",
             eventDescription: "",
+            eventColor: "#FF5733",
         };
     };
 
@@ -180,8 +194,11 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
                 endDateTime: formatDateAndTime(endDateTime),
                 eventDescription: data.eventDescription,
                 eventTitle: data.eventTitle,
+                eventColor: data.eventColor,
                 imageUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
             };
+
+            console.log(formattedData)
 
             setMeeting(prev => {
                 if (mode === 'edit' && event) {
@@ -326,8 +343,46 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
                                         )}
                                     />
                                 </div>
-                            </div>
 
+                                <FormField
+                                    control={form.control}
+                                    name="eventColor"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Event Color</FormLabel>
+                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select color">
+                                                            <div className="flex items-center gap-2">
+                                                                <div
+                                                                    className="w-4 h-4 rounded-full"
+                                                                    style={{ backgroundColor: field.value }}
+                                                                />
+                                                                {colorOptions.find(color => color.value === field.value)?.label}
+                                                            </div>
+                                                        </SelectValue>
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    {colorOptions.map((color) => (
+                                                        <SelectItem key={color.value} value={color.value}>
+                                                            <div className="flex items-center gap-2">
+                                                                <div
+                                                                    className="w-4 h-4 rounded-full"
+                                                                    style={{ backgroundColor: color.value }}
+                                                                />
+                                                                {color.label}
+                                                            </div>
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
                         </div>
 
                         <FormField

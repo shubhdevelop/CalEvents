@@ -18,61 +18,9 @@ import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import EventCreationDialog from './EventCreation'
 
-// const meetingsData = [
-//     // {
-//     //     id: 1,
-//     //     eventTitle: 'Leslie Alexander',
-//     //     imageUrl:
-//     //         'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-//     //     // startDatetime: '2024-10-29T13:00',
-//     //     // endDatetime: '2024-10-29T14:30',
-//     //     startDateTime: '2024-10-29T03:30',
-//     //     endDateTime: '2024-10-29T18:15',
-//     //     eventDescription: "",
-//     // },
-//     // {
-//     //     id: 2,
-//     //     eventTitle: 'Michael Foster',
-//     //     imageUrl:
-//     //         'https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-//     //     startDatetime: 'Wed Oct 30 2024 09:00:00 GMT+0530 (India Standard Time)',
-//     //     // endDatetime: '2024-10-31T11:30',
-//     //     endDatetime: 'Wed Thu 31 2024 09:30:00 GMT+0530 (India Standard Time)',
-//     //     eventDescription: "",
-//     // },
-
-//     // {
-//     //     id: 3,
-//     //     name: 'Dries Vincent',
-//     //     imageUrl:
-//     //         'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-//     //     startDatetime: '2022-05-20T17:00',
-//     //     endDatetime: '2022-05-20T18:30',
-
-//     // },
-//     // {
-//     //     id: 4,
-//     //     name: 'Leslie Alexander',
-//     //     imageUrl:
-//     //         'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-//     //     startDatetime: '2022-06-09T13:00',
-//     //     endDatetime: '2022-06-09T14:30',
-//     // },
-//     // {
-//     //     id: 5,
-//     //     name: 'Michael Foster',
-//     //     imageUrl:
-//     //         'https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-//     //     startDatetime: '2022-05-13T14:00',
-//     //     endDatetime: '2022-05-13T14:30',
-//     // },
-// ]
-
 function classNames(...classes: (string | boolean)[]) {
     return classes.filter(Boolean).join(' ')
 }
-
-
 
 export default function Scheduler() {
     const today = startOfToday()
@@ -88,6 +36,7 @@ export default function Scheduler() {
         startDateTime: string;
         endDateTime: string;
         eventDescription: string;
+        eventColor: string
     }[]>([]);
 
     const days = eachDayOfInterval({
@@ -185,7 +134,14 @@ export default function Scheduler() {
                                                     {meetings
                                                         .filter((meeting) => isSameDay(parseISO(meeting.startDateTime), day))
                                                         .map((meeting) => (
-                                                            <div key={meeting.id} className='bg-blue-700 text-xs rounded-lg text-white flex flex-row justify-start items-center gap-1 px-2'>
+                                                            <div
+                                                                key={meeting.id}
+                                                                style={{
+                                                                    backgroundColor: meeting.eventColor,
+                                                                    borderColor: meeting.eventColor
+                                                                }}
+                                                                className="border-[2px] text-xs rounded-lg text-white flex flex-row justify-start items-center gap-1 px-2"
+                                                            >
                                                                 <img src={meeting.imageUrl} className='w-2 h-2 rounded-full' alt={meeting.eventTitle} />
                                                                 {meeting.eventTitle}
                                                             </div>

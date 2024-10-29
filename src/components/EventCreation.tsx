@@ -50,7 +50,7 @@ interface FormData {
 const generateTimeOptions = () => {
     const options = [];
     for (let i = 0; i < 24; i++) {
-        for (let j = 0; j < 60; j += 30) {
+        for (let j = 0; j < 60; j += 15) {
             const hour = i.toString().padStart(2, '0');
             const minute = j.toString().padStart(2, '0');
             options.push(`${hour}:${minute}`);
@@ -106,11 +106,12 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
             };
         }
 
+        const defaultDate = new Date();
         return {
             eventTitle: "",
-            startDate: new Date(),
+            startDate: defaultDate,
             startTime: "09:00",
-            endDate: new Date(),
+            endDate: defaultDate,
             endTime: "10:00",
             eventDescription: "",
         };
@@ -121,7 +122,6 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
         resolver: async (values) => {
             const errors: Record<string, { type: string; message: string }> = {};
 
-            // Add eventTitle validation
             if (!values.eventTitle || values.eventTitle.trim() === '') {
                 errors.eventTitle = {
                     type: 'required',
@@ -129,10 +129,14 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
                 };
             }
 
+            // Compare only times without considering dates
             const [startHour, startMinute] = values.startTime.split(':').map(Number);
             const [endHour, endMinute] = values.endTime.split(':').map(Number);
 
-            if (endHour < startHour || (endHour === startHour && endMinute <= startMinute)) {
+            const startMinutes = startHour * 60 + startMinute;
+            const endMinutes = endHour * 60 + endMinute;
+
+            if (endMinutes <= startMinutes) {
                 errors.endTime = {
                     type: 'validation',
                     message: 'End time must be after start time'
@@ -155,10 +159,14 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
     const onSubmit = async (data: FormData) => {
         try {
             const startDateTime = combineDateAndTime(data.startDate, data.startTime);
-            const endDateTime = combineDateAndTime(data.endDate, data.endTime);
+            const endDateTime = combineDateAndTime(data.startDate, data.endTime); // Use startDate for both
 
-            // Additional validation to ensure end time is after start time
-            if (endDateTime <= startDateTime) {
+            const [startHour, startMinute] = data.startTime.split(':').map(Number);
+            const [endHour, endMinute] = data.endTime.split(':').map(Number);
+            const startMinutes = startHour * 60 + startMinute;
+            const endMinutes = endHour * 60 + endMinute;
+
+            if (endMinutes <= startMinutes) {
                 form.setError("endTime", {
                     type: "manual",
                     message: "End time must be after start time"
@@ -182,7 +190,6 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
                 return [...prev, formattedData];
             });
 
-            console.log('Form data:', formattedData);
             if (onOpenChange) onOpenChange(false);
             form.reset();
             if (onClose) onClose();
@@ -234,7 +241,7 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
                                     name="startDate"
                                     render={({ field }) => (
                                         <FormItem className="flex flex-col">
-                                            <FormLabel>Date</FormLabel>
+                                            <FormLabel>Start Date</FormLabel>
                                             <Popover>
                                                 <PopoverTrigger asChild>
                                                     <FormControl>
@@ -320,6 +327,7 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
                                     />
                                 </div>
                             </div>
+
                         </div>
 
                         <FormField

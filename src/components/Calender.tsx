@@ -201,7 +201,7 @@ export default function Scheduler() {
                                                                 }}
                                                                 className="text-xs rounded-lg text-black flex flex-row justify-start items-center gap-1 px-2 border-black border-[1px] hover:cursor-pointer"
                                                             >
-                                                                <img src={meeting.imageUrl} className='w-2 h-2 rounded-full' alt={meeting.eventTitle} />
+                                                                <img src={meeting.imgUrl} className='w-2 h-2 rounded-full' alt={meeting.eventTitle} />
                                                                 {meeting.eventTitle}
                                                             </div>
                                                         ))}
@@ -225,7 +225,7 @@ export default function Scheduler() {
                                 selectedDayMeetings.map((meeting) => (
                                     <div key={meeting._id} style={{ borderColor: meeting.eventColor }} className='w-fit border-[1px] p-2 rounded-md flex flex-col justify-center gap-2 min-w-full'>
                                         <div className='flex flex-row gap-2 justify-start items-center font-bold text-xs text-black'>
-                                            <img src={meeting.imageUrl} alt="" width={40} className='rounded-full' />
+                                            <img src={meeting.imgUrl} alt="" width={40} className='rounded-full' />
                                             <div className='flex flex-col justify-center items-start'>
                                                 <h2>{meeting.eventTitle}</h2>
                                                 <div className='text-xm text-gray-500'>
@@ -268,7 +268,7 @@ export default function Scheduler() {
                                 meetings.filter(meeting => isFuture(parseISO(meeting.startDateTime))).map((meeting) => (
                                     <div key={meeting._id} style={{ borderColor: meeting.eventColor }} className='w-fit border-[1px] p-2 rounded-md flex flex-col justify-center gap-2 min-w-full'>
                                         <div className='flex flex-row gap-2 justify-start items-center font-bold text-xs text-black'>
-                                            <img src={meeting.imageUrl} alt="" width={40} className='rounded-full' />
+                                            <img src={meeting.imgUrl} alt="" width={40} className='rounded-full' />
                                             <div className='flex flex-col justify-center items-start'>
                                                 <h2>{meeting.eventTitle}</h2>
                                                 <div className='text-xm text-gray-500'>

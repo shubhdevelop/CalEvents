@@ -4,17 +4,9 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
+import { Meeting } from "@/types";
 import { Calendar, } from 'lucide-react';
 
-type Meeting = {
-    _id: string;
-    eventTitle: string;
-    imageUrl: string;
-    startDateTime: string;
-    endDateTime: string;
-    eventDescription: string;
-    eventColor: string;
-};
 
 interface EventPopupProps {
     meeting: Meeting | null;
@@ -51,10 +43,10 @@ const EventPopup = ({ meeting, isOpen, onClose }: EventPopupProps) => {
                     </DialogTitle>
                 </DialogHeader>
 
-                {meeting.imageUrl && (
+                {meeting.imgUrl && (
                     <div className="relative w-full h-48 mb-4">
                         <img
-                            src={meeting.imageUrl}
+                            src={meeting.imgUrl}
                             alt={meeting.eventTitle}
                             className="w-full h-full object-cover rounded-md"
                         />

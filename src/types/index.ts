@@ -1,7 +1,7 @@
 export type Meeting = {
   _id: string;
   eventTitle: string;
-  imageUrl: string;
+  imgUrl: string;
   startDateTime: string;
   endDateTime: string;
   eventDescription: string;

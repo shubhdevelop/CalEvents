@@ -230,6 +230,7 @@ export default function Scheduler() {
                                             <img src={event.imgUrl} alt="" width={40} className='rounded-full' />
                                             <div className='flex flex-col justify-center items-start'>
                                                 <h2>{event.eventTitle}</h2>
+                                                <p className='text-xs text-gray-900'>{format(parseISO(event.startDateTime), "dd MMM yyyy")}</p>
                                                 <div className='text-xm text-gray-500'>
                                                     <span>{format(parseISO(event.startDateTime), "HH:mm")} - </span>
                                                     <span>{format(parseISO(event.endDateTime), "HH:mm")}</span>
@@ -273,6 +274,7 @@ export default function Scheduler() {
                                             <img src={event.imgUrl} alt="" width={40} className='rounded-full' />
                                             <div className='flex flex-col justify-center items-start'>
                                                 <h2>{event.eventTitle}</h2>
+                                                <p className='text-xs text-gray-900'>{format(parseISO(event.startDateTime), "dd MMM yyyy")}</p>
                                                 <div className='text-xm text-gray-500'>
                                                     <span>{format(parseISO(event.startDateTime), "HH:mm")} - </span>
                                                     <span>{format(parseISO(event.endDateTime), "HH:mm")}</span>

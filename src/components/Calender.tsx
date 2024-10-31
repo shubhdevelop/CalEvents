@@ -12,7 +12,7 @@ import {
     parseISO,
     startOfToday,
 } from 'date-fns'
-import { ChevronRight, ChevronLeft, Edit, Trash2, } from 'lucide-react'
+import { ChevronRight, ChevronLeft, Edit, Trash2, View, } from 'lucide-react'
 
 import { useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button"
@@ -20,6 +20,7 @@ import EventCreationDialog from './EventCreation'
 import { useAuth } from '../context/authContext'
 import { getToken } from '@/lib/utils'
 import { Meeting } from '@/types'
+import EventPopup from './EventDetails'
 
 function classNames(...classes: (string | boolean)[]) {
     return classes.filter(Boolean).join(' ')
@@ -28,7 +29,7 @@ function classNames(...classes: (string | boolean)[]) {
 export default function Scheduler() {
 
     const { currentUser } = useAuth()
-
+    const [isOpen, setIsOpen] = useState(false);
     const today = startOfToday()
     const [selectedDay, setSelectedDay] = useState(today)
     const [currentMonth, setCurrentMonth] = useState(format(today, 'MMM-yyyy'))
@@ -36,6 +37,7 @@ export default function Scheduler() {
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
     const firstDayCurrentMonth = parse(currentMonth, 'MMM-yyyy', new Date())
     const [meetings, setMeeting] = useState<Meeting[]>([]);
+    const [detailedMeeting, setDetailedMeeting] = useState<Meeting | null>(null);
 
     const days = eachDayOfInterval({
         start: firstDayCurrentMonth,
@@ -117,6 +119,11 @@ export default function Scheduler() {
 
     return (
         <div className="pt-16 h-full">
+            <EventPopup
+                meeting={detailedMeeting}
+                isOpen={isOpen}
+                onClose={() => setIsOpen(false)}
+            />
             <div className="max-w-full px-4 mx-auto sm:px-7 md:max-w-full h-full md:px-6">
                 <div className="md:grid h-full md:grid-cols-4 md:divide-x md:divide-gray-200">
                     <div className="md:pr-14 col-span-3">
@@ -183,7 +190,10 @@ export default function Scheduler() {
                                                     {meetings
                                                         .filter((meeting) => isSameDay(parseISO(meeting.startDateTime), day))
                                                         .map((meeting) => (
-                                                            <div
+                                                            <div onClick={() => {
+                                                                setIsOpen(true);
+                                                                setDetailedMeeting(meeting)
+                                                            }}
                                                                 key={meeting._id}
                                                                 style={{
                                                                     backgroundColor: meeting.eventColor,
@@ -230,6 +240,13 @@ export default function Scheduler() {
                                                 >
                                                     <Edit />
                                                 </Button>
+                                                <Button onClick={() => {
+                                                    setDetailedMeeting(meeting);
+                                                    setIsOpen(prev => !prev)
+                                                }
+                                                } variant={"outline"} className='w-fit'>
+                                                    <View />
+                                                </Button>
                                                 <Button onClick={() => deleteEvent(meeting._id)} variant={"destructive"} className='w-fit'>
                                                     <Trash2 />
                                                 </Button>
@@ -266,6 +283,13 @@ export default function Scheduler() {
                                                 >
                                                     <Edit />
                                                 </Button>
+                                                <Button onClick={() => {
+                                                    setDetailedMeeting(meeting);
+                                                    setIsOpen(prev => !prev)
+                                                }
+                                                } variant={"outline"} className='w-fit'>
+                                                    <View />
+                                                </Button>
                                                 <Button onClick={() => deleteEvent(meeting._id)} variant={"destructive"} className='w-fit'>
                                                     <Trash2 />
                                                 </Button>
@@ -274,7 +298,9 @@ export default function Scheduler() {
                                     </div>
                                 ))
                             ) : (
-                                <p>No Upcoming Events.</p>
+                                <>
+                                    <p>No Upcoming Events.</p>
+                                </>
                             )}
                         </ol>
                     </section>

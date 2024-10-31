@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Mail, Phone, Key, Shield } from 'lucide-react';
+import { Mail, Phone, } from 'lucide-react';
 import { useAuth } from '@/context/authContext';
 import { Navigate } from 'react-router-dom';
 

@@ -22,6 +22,7 @@ import { useAuth } from '../context/authContext'
 import { getToken } from '@/lib/utils'
 import { Event } from '@/types'
 import EventPopup from './EventDetails'
+const BASE_API = import.meta.env.BASE_API;
 
 function classNames(...classes: (string | boolean)[]) {
     return classes.filter(Boolean).join(' ')
@@ -72,7 +73,7 @@ export default function Scheduler() {
     const deleteEvent = async (_id: string) => {
         const idToken = await getToken(currentUser);
         try {
-            const response = await fetch(`http://localhost:3000/api/v1/events/${_id}`, {
+            const response = await fetch(`${BASE_API}/events/${_id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${idToken}`
@@ -94,7 +95,7 @@ export default function Scheduler() {
         async function fetchEvents() {
             const idToken = await getToken(currentUser);
             try {
-                const response = await fetch("http://localhost:3000/api/v1/events/", {
+                const response = await fetch("${BASE_API}:3000/api/v1/events/", {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${idToken}`
@@ -108,6 +109,7 @@ export default function Scheduler() {
                 const data = await response.json();
                 setEvents([...data.data])
             } catch (error) {
+                setEvents([])
                 console.log(error)
             }
         }

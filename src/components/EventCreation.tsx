@@ -40,6 +40,9 @@ import { formatDateAndTime } from '@/utils/utils';
 import { useAuth } from '@/context/authContext';
 import { Event } from '@/types';
 
+const BASE_API = import.meta.env.VITE_BASE_API;
+
+
 interface FormData {
     eventTitle: string;
     startDate: Date;
@@ -221,7 +224,7 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
     async function createEvents(eventData: Event) {
         const idToken = await getToken(currentUser);
         try {
-            const response = await fetch("http://localhost:3000/api/v1/events/", {
+            const response = await fetch(`${BASE_API}/events/`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${idToken}`,
@@ -246,7 +249,7 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
         const idToken = await getToken(currentUser);
         try {
             console.log(JSON.stringify(eventData))
-            const response = await fetch("http://localhost:3000/api/v1/events/", {
+            const response = await fetch(`${BASE_API}/events/`, {
                 method: 'PATCH',
                 headers: {
                     'Authorization': `Bearer ${idToken}`,

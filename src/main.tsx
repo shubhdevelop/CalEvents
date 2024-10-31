@@ -14,6 +14,7 @@ import "./index.css";
 import MainLayout from './layout/MainLayout.tsx';
 import Login from './components/Login.tsx';
 import Register from './components/Register.tsx';
+import UserProfile from './components/UserProfile.tsx'
 // import Auth from './auth/Auth.tsx';
 
 const router = createBrowserRouter(createRoutesFromElements(
@@ -21,6 +22,9 @@ const router = createBrowserRouter(createRoutesFromElements(
     <Route index element={<App />} />
     <Route path="login" element={<Login />} />
     <Route path="register" element={<Register />} />
+    <Route path="profile" element={<UserProfile />} />
+
+
   </Route >
 ));
 

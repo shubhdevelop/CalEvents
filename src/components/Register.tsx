@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { FormEvent, useState } from 'react'
 import { Navigate, Link, } from 'react-router-dom'
 import { useAuth } from '../context/authContext'
 import { doCreateUserWithEmailAndPassword } from '@/auth/auth'
@@ -12,10 +12,10 @@ const Register = () => {
     const [password, setPassword] = useState('')
     const [confirmPassword, setconfirmPassword] = useState('')
     const [isRegistering, setIsRegistering] = useState(false)
-    const [errorMessage, setErrorMessage] = useState('')
+    const [errorMessage] = useState('')
 
 
-    const onSubmit = async (e) => {
+    const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         if (!isRegistering) {
             setIsRegistering(true)

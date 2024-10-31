@@ -333,4 +333,4 @@ const colStartClasses = [
     'col-start-7',
 ]
 
-const weekdays = ["S", "M", "T", "W", "T", "F", "S"]
+const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]

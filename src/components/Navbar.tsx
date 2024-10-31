@@ -10,8 +10,9 @@ const Navbar = () => {
         <nav className="bg-white border-b border-gray-200">
             <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between h-16 items-center">
-                    <div className="flex-shrink-0">
-                        <Link to={"/"}>
+                    <div className="flex-shrink-0 ">
+                        <Link to={"/"} className='flex-row flex justify-center items-center gap-2 '>
+                            <img src="./icon.png" alt="logo" className='w-5 h-5' />
                             <span className="text-xl font-bold text-gray-800">Cal Events</span>
                         </Link>
                     </div>

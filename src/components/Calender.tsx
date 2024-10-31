@@ -22,7 +22,7 @@ import { useAuth } from '../context/authContext'
 import { getToken } from '@/lib/utils'
 import { Event } from '@/types'
 import EventPopup from './EventDetails'
-const BASE_API = import.meta.env.BASE_API;
+const BASE_API = import.meta.env.VITE_BASE_API;
 
 function classNames(...classes: (string | boolean)[]) {
     return classes.filter(Boolean).join(' ')
@@ -95,7 +95,7 @@ export default function Scheduler() {
         async function fetchEvents() {
             const idToken = await getToken(currentUser);
             try {
-                const response = await fetch("${BASE_API}:3000/api/v1/events/", {
+                const response = await fetch(`${BASE_API}/events/`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${idToken}`

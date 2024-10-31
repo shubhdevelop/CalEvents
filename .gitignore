@@ -22,3 +22,5 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+config/calevent-2fc84-firebase-adminsdk-4rggx-f28eea9dae.json

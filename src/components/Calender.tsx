@@ -14,30 +14,28 @@ import {
 } from 'date-fns'
 import { ChevronRight, ChevronLeft, Edit, Trash2, } from 'lucide-react'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button"
 import EventCreationDialog from './EventCreation'
+import { useAuth } from '../context/authContext'
+import { getToken } from '@/lib/utils'
+import { Meeting } from '@/types'
 
 function classNames(...classes: (string | boolean)[]) {
     return classes.filter(Boolean).join(' ')
 }
 
 export default function Scheduler() {
+
+    const { currentUser } = useAuth()
+
     const today = startOfToday()
     const [selectedDay, setSelectedDay] = useState(today)
     const [currentMonth, setCurrentMonth] = useState(format(today, 'MMM-yyyy'))
-    const [editingEvent, setEditingEvent] = useState<typeof meetings[0] | null>(null)
+    const [editingEvent, setEditingEvent] = useState<Meeting | null>(null)
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
     const firstDayCurrentMonth = parse(currentMonth, 'MMM-yyyy', new Date())
-    const [meetings, setMeeting] = useState<{
-        id: number;
-        eventTitle: string;
-        imageUrl: string;
-        startDateTime: string;
-        endDateTime: string;
-        eventDescription: string;
-        eventColor: string
-    }[]>([]);
+    const [meetings, setMeeting] = useState<Meeting[]>([]);
 
     const days = eachDayOfInterval({
         start: firstDayCurrentMonth,
@@ -67,6 +65,55 @@ export default function Scheduler() {
         setEditingEvent(null)
         setIsEditDialogOpen(false)
     }
+
+    const deleteEvent = async (_id: string) => {
+        const idToken = await getToken(currentUser);
+        try {
+            const response = await fetch(`http://localhost:3000/api/v1/events/${_id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${idToken}`
+                }
+            });
+            if (!response.ok) {
+                throw new Error("error Deleting Events")
+            }
+
+            setMeeting(prev => prev.filter(item => item._id !== _id)
+            )
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    useEffect(() => {
+        async function fetchEvents() {
+            const idToken = await getToken(currentUser);
+            try {
+                const response = await fetch("http://localhost:3000/api/v1/events/", {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${idToken}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error("error fetching")
+                }
+
+                const data = await response.json();
+                setMeeting([...data.data])
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        fetchEvents()
+
+    }, [currentUser])
+
+
 
     return (
         <div className="pt-16 h-full">
@@ -137,12 +184,11 @@ export default function Scheduler() {
                                                         .filter((meeting) => isSameDay(parseISO(meeting.startDateTime), day))
                                                         .map((meeting) => (
                                                             <div
-                                                                key={meeting.id}
+                                                                key={meeting._id}
                                                                 style={{
                                                                     backgroundColor: meeting.eventColor,
-                                                                    borderColor: meeting.eventColor
                                                                 }}
-                                                                className="border-[2px] text-xs rounded-lg text-white flex flex-row justify-start items-center gap-1 px-2"
+                                                                className="text-xs rounded-lg text-black flex flex-row justify-start items-center gap-1 px-2 border-black border-[1px] hover:cursor-pointer"
                                                             >
                                                                 <img src={meeting.imageUrl} className='w-2 h-2 rounded-full' alt={meeting.eventTitle} />
                                                                 {meeting.eventTitle}
@@ -166,7 +212,7 @@ export default function Scheduler() {
                         <ol className="mt-4 space-y-1 text-sm leading-6 text-gray-500 overflow-x-scroll h-[50%]">
                             {selectedDayMeetings.length > 0 ? (
                                 selectedDayMeetings.map((meeting) => (
-                                    <div key={meeting.id} style={{ borderColor: meeting.eventColor }} className='w-fit border-[1px] p-2 rounded-md flex flex-col justify-center gap-2 min-w-full'>
+                                    <div key={meeting._id} style={{ borderColor: meeting.eventColor }} className='w-fit border-[1px] p-2 rounded-md flex flex-col justify-center gap-2 min-w-full'>
                                         <div className='flex flex-row gap-2 justify-start items-center font-bold text-xs text-black'>
                                             <img src={meeting.imageUrl} alt="" width={40} className='rounded-full' />
                                             <div className='flex flex-col justify-center items-start'>
@@ -184,7 +230,7 @@ export default function Scheduler() {
                                                 >
                                                     <Edit />
                                                 </Button>
-                                                <Button variant={"destructive"} className='w-fit'>
+                                                <Button onClick={() => deleteEvent(meeting._id)} variant={"destructive"} className='w-fit'>
                                                     <Trash2 />
                                                 </Button>
                                             </div>
@@ -202,7 +248,7 @@ export default function Scheduler() {
                         <ol className="mt-4 space-y-1 text-sm leading-6 text-gray-500 overflow-x-scroll ">
                             {meetings.length > 0 ? (
                                 meetings.map((meeting) => (
-                                    <div key={meeting.id} style={{ borderColor: meeting.eventColor }} className='w-fit border-[1px] p-2 rounded-md flex flex-col justify-center gap-2 min-w-full'>
+                                    <div key={meeting._id} style={{ borderColor: meeting.eventColor }} className='w-fit border-[1px] p-2 rounded-md flex flex-col justify-center gap-2 min-w-full'>
                                         <div className='flex flex-row gap-2 justify-start items-center font-bold text-xs text-black'>
                                             <img src={meeting.imageUrl} alt="" width={40} className='rounded-full' />
                                             <div className='flex flex-col justify-center items-start'>
@@ -220,7 +266,7 @@ export default function Scheduler() {
                                                 >
                                                     <Edit />
                                                 </Button>
-                                                <Button variant={"destructive"} className='w-fit'>
+                                                <Button onClick={() => deleteEvent(meeting._id)} variant={"destructive"} className='w-fit'>
                                                     <Trash2 />
                                                 </Button>
                                             </div>

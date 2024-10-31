@@ -35,8 +35,10 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
+import { cn, getToken } from "@/lib/utils";
 import { formatDateAndTime } from '@/utils/utils';
+import { useAuth } from '@/context/authContext';
+import { Meeting } from '@/types';
 
 interface FormData {
     eventTitle: string;
@@ -71,27 +73,11 @@ const colorOptions = [
 
 interface EventCreationDialogProps {
     mode?: 'create' | 'edit';
-    event?: {
-        id: number;
-        eventTitle: string;
-        imageUrl: string;
-        startDateTime: string;
-        endDateTime: string;
-        eventDescription: string;
-        eventColor?: string;
-    };
+    event?: Meeting;
     onClose?: () => void;
     open?: boolean;
     onOpenChange?: (open: boolean) => void;
-    setMeeting: React.Dispatch<React.SetStateAction<{
-        id: number;
-        eventTitle: string;
-        imageUrl: string;
-        startDateTime: string;
-        endDateTime: string;
-        eventDescription: string;
-        eventColor: string;
-    }[]>>;
+    setMeeting: React.Dispatch<React.SetStateAction<Meeting[]>>;
 }
 
 const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
@@ -102,6 +88,8 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
     onOpenChange,
     setMeeting,
 }) => {
+    const { currentUser } = useAuth();
+
     const timeOptions = generateTimeOptions();
 
     const getDefaultValues = () => {
@@ -189,7 +177,7 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
             }
 
             const formattedData = {
-                id: mode === 'edit' ? Number(event?.id) : Math.random(),
+                _id: mode === 'edit' && event ? event._id : "",
                 startDateTime: formatDateAndTime(startDateTime),
                 endDateTime: formatDateAndTime(endDateTime),
                 eventDescription: data.eventDescription,
@@ -200,12 +188,21 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
 
             console.log(formattedData)
 
-            setMeeting(prev => {
-                if (mode === 'edit' && event) {
-                    return prev.map(item => item.id === event.id ? formattedData : item);
+            if (mode === 'edit' && event) {
+                const response = await updateEvent(formattedData);
+                if (response) {
+                    setMeeting(prev => {
+                        return prev.map(item => item._id === event._id ? formattedData : item);
+                    });
                 }
-                return [...prev, formattedData];
-            });
+            } else {
+                const response = await createEvents(formattedData);
+                if (response) {
+                    setMeeting(prev => {
+                        return [...prev, response];
+                    });
+                }
+            }
 
             if (onOpenChange) onOpenChange(false);
             form.reset();
@@ -220,6 +217,55 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
         form.reset();
         if (onClose) onClose();
     };
+
+    async function createEvents(eventData: Meeting) {
+        const idToken = await getToken(currentUser);
+        try {
+            const response = await fetch("http://localhost:3000/api/v1/events/", {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${idToken}`,
+                    'Content-Type': "application/json"
+                },
+                body: JSON.stringify(eventData)
+            });
+
+            if (!response.ok) {
+                throw new Error("error fetching")
+            }
+
+            const data = await response.json();
+            console.log(data);
+            return data.data;
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    async function updateEvent(eventData: Meeting) {
+        const idToken = await getToken(currentUser);
+        try {
+            console.log(JSON.stringify(eventData))
+            const response = await fetch("http://localhost:3000/api/v1/events/", {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${idToken}`,
+                    'Content-Type': "application/json"
+                },
+                body: JSON.stringify(eventData)
+            });
+
+            if (!response.ok) {
+                throw new Error("error Updating the events")
+            }
+
+            const data = await response.json();
+            console.log(data);
+            return data.data;
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>

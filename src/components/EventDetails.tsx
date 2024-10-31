@@ -4,18 +4,18 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
-import { Meeting } from "@/types";
+import { Event } from "@/types";
 import { Calendar, } from 'lucide-react';
 
 
 interface EventPopupProps {
-    meeting: Meeting | null;
+    event: Event | null;
     isOpen: boolean;
     onClose: () => void;
 }
 
-const EventPopup = ({ meeting, isOpen, onClose }: EventPopupProps) => {
-    if (!meeting) return null;
+const EventPopup = ({ event, isOpen, onClose }: EventPopupProps) => {
+    if (!event) return null;
 
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
@@ -37,17 +37,17 @@ const EventPopup = ({ meeting, isOpen, onClose }: EventPopupProps) => {
                     <DialogTitle className="text-2xl font-bold">
                         <div
                             className="w-3 h-3 rounded-full inline-block mr-2"
-                            style={{ backgroundColor: meeting.eventColor }}
+                            style={{ backgroundColor: event.eventColor }}
                         />
-                        {meeting.eventTitle}
+                        {event.eventTitle}
                     </DialogTitle>
                 </DialogHeader>
 
-                {meeting.imgUrl && (
+                {event.imgUrl && (
                     <div className="relative w-full h-48 mb-4">
                         <img
-                            src={meeting.imgUrl}
-                            alt={meeting.eventTitle}
+                            src={event.imgUrl}
+                            alt={event.eventTitle}
                             className="w-full h-full object-cover rounded-md"
                         />
                     </div>
@@ -57,15 +57,15 @@ const EventPopup = ({ meeting, isOpen, onClose }: EventPopupProps) => {
                     <div className="flex items-center gap-2 text-gray-600">
                         <Calendar className="w-5 h-5" />
                         <div className="space-y-1">
-                            <p>Starts: {formatDate(meeting.startDateTime)}</p>
-                            <p>Ends: {formatDate(meeting.endDateTime)}</p>
+                            <p>Starts: {formatDate(event.startDateTime)}</p>
+                            <p>Ends: {formatDate(event.endDateTime)}</p>
                         </div>
                     </div>
 
                     <div className="prose max-w-none">
                         <h4 className="text-lg font-semibold mb-2">Description</h4>
                         <p className="text-gray-700 whitespace-pre-wrap">
-                            {meeting.eventDescription}
+                            {event.eventDescription}
                         </p>
                     </div>
                 </div>

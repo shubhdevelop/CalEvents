@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button"
 import EventCreationDialog from './EventCreation'
 import { useAuth } from '../context/authContext'
 import { getToken } from '@/lib/utils'
-import { Meeting } from '@/types'
+import { Event } from '@/types'
 import EventPopup from './EventDetails'
 
 function classNames(...classes: (string | boolean)[]) {
@@ -34,11 +34,11 @@ export default function Scheduler() {
     const today = startOfToday()
     const [selectedDay, setSelectedDay] = useState(today)
     const [currentMonth, setCurrentMonth] = useState(format(today, 'MMM-yyyy'))
-    const [editingEvent, setEditingEvent] = useState<Meeting | null>(null)
+    const [editingEvent, setEditingEvent] = useState<Event | null>(null)
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
     const firstDayCurrentMonth = parse(currentMonth, 'MMM-yyyy', new Date())
-    const [meetings, setMeeting] = useState<Meeting[]>([]);
-    const [detailedMeeting, setDetailedMeeting] = useState<Meeting | null>(null);
+    const [events, setEvents] = useState<Event[]>([]);
+    const [detailedEvent, setDetailedEvent] = useState<Event | null>(null);
 
     const days = eachDayOfInterval({
         start: firstDayCurrentMonth,
@@ -55,11 +55,11 @@ export default function Scheduler() {
         setCurrentMonth(format(firstDayNextMonth, 'MMM-yyyy'))
     }
 
-    const selectedDayMeetings = meetings.filter((meeting) =>
-        isSameDay(parseISO(meeting.startDateTime), selectedDay)
+    const selectedDayEvents = events.filter((event) =>
+        isSameDay(parseISO(event.startDateTime), selectedDay)
     )
 
-    const handleEditClick = (event: typeof meetings[0]) => {
+    const handleEditClick = (event: Event) => {
         setEditingEvent(event)
         setIsEditDialogOpen(true)
     }
@@ -82,7 +82,7 @@ export default function Scheduler() {
                 throw new Error("error Deleting Events")
             }
 
-            setMeeting(prev => prev.filter(item => item._id !== _id)
+            setEvents(prev => prev.filter(item => item._id !== _id)
             )
 
         } catch (error) {
@@ -106,7 +106,7 @@ export default function Scheduler() {
                 }
 
                 const data = await response.json();
-                setMeeting([...data.data])
+                setEvents([...data.data])
             } catch (error) {
                 console.log(error)
             }
@@ -121,7 +121,7 @@ export default function Scheduler() {
     return (
         <div className="pt-16 h-full">
             <EventPopup
-                meeting={detailedMeeting}
+                event={detailedEvent}
                 isOpen={isOpen}
                 onClose={() => setIsOpen(false)}
             />
@@ -136,7 +136,7 @@ export default function Scheduler() {
                                 </div>
                             </div>
                             <div className='flex flex-row justify-between items-center gap-2'>
-                                <EventCreationDialog setMeeting={setMeeting} />
+                                <EventCreationDialog setMeeting={setEvents} />
                                 <Button
                                     type="button"
                                     onClick={previousMonth}
@@ -184,25 +184,25 @@ export default function Scheduler() {
                                         {format(day, 'd')}
                                     </time>
                                     <div className="w-full h-full flex flex-col justify-start items-center mx-auto mt-1">
-                                        {meetings.some((meeting) =>
-                                            isSameDay(parseISO(meeting.startDateTime), day)
+                                        {events.some((event) =>
+                                            isSameDay(parseISO(event.startDateTime), day)
                                         ) && (
                                                 <div className="w-full h-full flex flex-col gap-2">
-                                                    {meetings
-                                                        .filter((meeting) => isSameDay(parseISO(meeting.startDateTime), day))
-                                                        .map((meeting) => (
+                                                    {events
+                                                        .filter((event) => isSameDay(parseISO(event.startDateTime), day))
+                                                        .map((event) => (
                                                             <div onClick={() => {
                                                                 setIsOpen(true);
-                                                                setDetailedMeeting(meeting)
+                                                                setDetailedEvent(event)
                                                             }}
-                                                                key={meeting._id}
+                                                                key={event._id}
                                                                 style={{
-                                                                    backgroundColor: meeting.eventColor,
+                                                                    backgroundColor: event.eventColor,
                                                                 }}
                                                                 className="text-xs rounded-lg text-black flex flex-row justify-start items-center gap-1 px-2 border-black border-[1px] hover:cursor-pointer"
                                                             >
-                                                                <img src={meeting.imgUrl} className='w-2 h-2 rounded-full' alt={meeting.eventTitle} />
-                                                                {meeting.eventTitle}
+                                                                <img src={event.imgUrl} className='w-2 h-2 rounded-full' alt={event.eventTitle} />
+                                                                {event.eventTitle}
                                                             </div>
                                                         ))}
                                                 </div>
@@ -221,34 +221,34 @@ export default function Scheduler() {
                         </h2>
                         <hr className='my-1' />
                         <ol className="mt-4 space-y-1 text-sm leading-6 text-gray-500 overflow-x-scroll h-[50%]">
-                            {selectedDayMeetings.length > 0 ? (
-                                selectedDayMeetings.map((meeting) => (
-                                    <div key={meeting._id} style={{ borderColor: meeting.eventColor }} className='w-fit border-[1px] p-2 rounded-md flex flex-col justify-center gap-2 min-w-full'>
+                            {selectedDayEvents.length > 0 ? (
+                                selectedDayEvents.map((event) => (
+                                    <div key={event._id} style={{ borderColor: event.eventColor }} className='w-fit border-[1px] p-2 rounded-md flex flex-col justify-center gap-2 min-w-full'>
                                         <div className='flex flex-row gap-2 justify-start items-center font-bold text-xs text-black'>
-                                            <img src={meeting.imgUrl} alt="" width={40} className='rounded-full' />
+                                            <img src={event.imgUrl} alt="" width={40} className='rounded-full' />
                                             <div className='flex flex-col justify-center items-start'>
-                                                <h2>{meeting.eventTitle}</h2>
+                                                <h2>{event.eventTitle}</h2>
                                                 <div className='text-xm text-gray-500'>
-                                                    <span>{format(parseISO(meeting.startDateTime), "HH:mm")} - </span>
-                                                    <span>{format(parseISO(meeting.endDateTime), "HH:mm")}</span>
+                                                    <span>{format(parseISO(event.startDateTime), "HH:mm")} - </span>
+                                                    <span>{format(parseISO(event.endDateTime), "HH:mm")}</span>
                                                 </div>
                                             </div>
                                             <div className='flex flex-row justify-start items-center gap-4 ml-auto'>
                                                 <Button
                                                     variant={"outline"}
                                                     className='w-fit'
-                                                    onClick={() => handleEditClick(meeting)}
+                                                    onClick={() => handleEditClick(event)}
                                                 >
                                                     <Edit />
                                                 </Button>
                                                 <Button onClick={() => {
-                                                    setDetailedMeeting(meeting);
+                                                    setDetailedEvent(event);
                                                     setIsOpen(prev => !prev)
                                                 }
                                                 } variant={"outline"} className='w-fit'>
                                                     <View />
                                                 </Button>
-                                                <Button onClick={() => deleteEvent(meeting._id)} variant={"destructive"} className='w-fit'>
+                                                <Button onClick={() => deleteEvent(event._id)} variant={"destructive"} className='w-fit'>
                                                     <Trash2 />
                                                 </Button>
                                             </div>
@@ -264,34 +264,34 @@ export default function Scheduler() {
                         </h2>
                         <hr className='my-1' />
                         <ol className="mt-4 space-y-1 text-sm leading-6 text-gray-500 overflow-x-scroll ">
-                            {meetings.length > 0 ? (
-                                meetings.filter(meeting => isFuture(parseISO(meeting.startDateTime))).map((meeting) => (
-                                    <div key={meeting._id} style={{ borderColor: meeting.eventColor }} className='w-fit border-[1px] p-2 rounded-md flex flex-col justify-center gap-2 min-w-full'>
+                            {events.length > 0 ? (
+                                events.filter(event => isFuture(parseISO(event.startDateTime))).map((event) => (
+                                    <div key={event._id} style={{ borderColor: event.eventColor }} className='w-fit border-[1px] p-2 rounded-md flex flex-col justify-center gap-2 min-w-full'>
                                         <div className='flex flex-row gap-2 justify-start items-center font-bold text-xs text-black'>
-                                            <img src={meeting.imgUrl} alt="" width={40} className='rounded-full' />
+                                            <img src={event.imgUrl} alt="" width={40} className='rounded-full' />
                                             <div className='flex flex-col justify-center items-start'>
-                                                <h2>{meeting.eventTitle}</h2>
+                                                <h2>{event.eventTitle}</h2>
                                                 <div className='text-xm text-gray-500'>
-                                                    <span>{format(parseISO(meeting.startDateTime), "HH:mm")} - </span>
-                                                    <span>{format(parseISO(meeting.endDateTime), "HH:mm")}</span>
+                                                    <span>{format(parseISO(event.startDateTime), "HH:mm")} - </span>
+                                                    <span>{format(parseISO(event.endDateTime), "HH:mm")}</span>
                                                 </div>
                                             </div>
                                             <div className='flex flex-row justify-start items-center gap-4 ml-auto '>
                                                 <Button
                                                     variant={"outline"}
                                                     className='w-fit'
-                                                    onClick={() => handleEditClick(meeting)}
+                                                    onClick={() => handleEditClick(event)}
                                                 >
                                                     <Edit />
                                                 </Button>
                                                 <Button onClick={() => {
-                                                    setDetailedMeeting(meeting);
+                                                    setDetailedEvent(event);
                                                     setIsOpen(prev => !prev)
                                                 }
                                                 } variant={"outline"} className='w-fit'>
                                                     <View />
                                                 </Button>
-                                                <Button onClick={() => deleteEvent(meeting._id)} variant={"destructive"} className='w-fit'>
+                                                <Button onClick={() => deleteEvent(event._id)} variant={"destructive"} className='w-fit'>
                                                     <Trash2 />
                                                 </Button>
                                             </div>
@@ -309,7 +309,7 @@ export default function Scheduler() {
             </div>
             {editingEvent && (
                 <EventCreationDialog
-                    setMeeting={setMeeting}
+                    setMeeting={setEvents}
                     mode="edit"
                     event={editingEvent}
                     onClose={handleEditClose}

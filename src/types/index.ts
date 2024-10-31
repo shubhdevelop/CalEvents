@@ -1,4 +1,4 @@
-export type Meeting = {
+export type Event = {
   _id: string;
   eventTitle: string;
   imgUrl: string;

@@ -38,7 +38,7 @@ import {
 import { cn, getToken } from "@/lib/utils";
 import { formatDateAndTime } from '@/utils/utils';
 import { useAuth } from '@/context/authContext';
-import { Meeting } from '@/types';
+import { Event } from '@/types';
 
 interface FormData {
     eventTitle: string;
@@ -73,11 +73,11 @@ const colorOptions = [
 
 interface EventCreationDialogProps {
     mode?: 'create' | 'edit';
-    event?: Meeting;
+    event?: Event;
     onClose?: () => void;
     open?: boolean;
     onOpenChange?: (open: boolean) => void;
-    setMeeting: React.Dispatch<React.SetStateAction<Meeting[]>>;
+    setMeeting: React.Dispatch<React.SetStateAction<Event[]>>;
 }
 
 const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
@@ -183,7 +183,7 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
                 eventDescription: data.eventDescription,
                 eventTitle: data.eventTitle,
                 eventColor: data.eventColor,
-                imageUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                imgUrl: ""
             };
 
             console.log(formattedData)
@@ -218,7 +218,7 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
         if (onClose) onClose();
     };
 
-    async function createEvents(eventData: Meeting) {
+    async function createEvents(eventData: Event) {
         const idToken = await getToken(currentUser);
         try {
             const response = await fetch("http://localhost:3000/api/v1/events/", {
@@ -242,7 +242,7 @@ const EventCreationDialog: React.FC<EventCreationDialogProps> = ({
         }
     }
 
-    async function updateEvent(eventData: Meeting) {
+    async function updateEvent(eventData: Event) {
         const idToken = await getToken(currentUser);
         try {
             console.log(JSON.stringify(eventData))

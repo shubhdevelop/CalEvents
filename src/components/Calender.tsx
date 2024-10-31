@@ -5,6 +5,7 @@ import {
     format,
     getDay,
     isEqual,
+    isFuture,
     isSameDay,
     isSameMonth,
     isToday,
@@ -264,7 +265,7 @@ export default function Scheduler() {
                         <hr className='my-1' />
                         <ol className="mt-4 space-y-1 text-sm leading-6 text-gray-500 overflow-x-scroll ">
                             {meetings.length > 0 ? (
-                                meetings.map((meeting) => (
+                                meetings.filter(meeting => isFuture(parseISO(meeting.startDateTime))).map((meeting) => (
                                     <div key={meeting._id} style={{ borderColor: meeting.eventColor }} className='w-fit border-[1px] p-2 rounded-md flex flex-col justify-center gap-2 min-w-full'>
                                         <div className='flex flex-row gap-2 justify-start items-center font-bold text-xs text-black'>
                                             <img src={meeting.imageUrl} alt="" width={40} className='rounded-full' />
